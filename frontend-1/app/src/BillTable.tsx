@@ -19,6 +19,7 @@ function BillTable(): ReactElement {
 
   const updateCategory = useCallback((e) => {
     setCategory(e.target.value);
+    setOrder(ORDER.default);
   }, []);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ function BillTable(): ReactElement {
 
   const changeMonth = useCallback((e) => {
     setMonth(e.target.value);
+    setOrder(ORDER.default);
   }, []);
 
   const clearFilter = useCallback((e) => {
