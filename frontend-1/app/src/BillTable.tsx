@@ -1,5 +1,11 @@
 import React, { ReactElement, useState, useEffect, useCallback } from "react";
-import { getBillList, getCategories, IBill, ICategory } from "./api/index";
+import {
+  getBillList,
+  getCategories,
+  IBill,
+  ICategory,
+  ORDER,
+} from "./api/index";
 import Bill from "./Bill";
 import BillTotal from "./BillTotal";
 import BillAdd from "./BillAdd";
@@ -9,15 +15,16 @@ function BillTable(): ReactElement {
   const [list, setList] = useState<IBill[]>([]);
   const [month, setMonth] = useState("");
   const [category, setCategory] = useState<ICategory["id"]>("");
+  const [order, setOrder] = useState<ORDER>(ORDER.default);
 
   const updateCategory = useCallback((e) => {
     setCategory(e.target.value);
   }, []);
 
   useEffect(() => {
-    const list = getBillList(month, category);
+    const list = getBillList(month, category, order);
     setList(list);
-  }, [month, category]);
+  }, [month, category, order]);
 
   const addBill = useCallback((bill: IBill) => {
     setList((prevList) => [...prevList, bill]);
@@ -30,6 +37,7 @@ function BillTable(): ReactElement {
   const clearFilter = useCallback((e) => {
     setMonth("");
     setCategory("");
+    setOrder(ORDER.default);
   }, []);
 
   return (
@@ -66,22 +74,26 @@ function BillTable(): ReactElement {
             <th>账单时间</th>
             <th>账单类型</th>
             <th>账单分类</th>
-            <th>账单金额</th>
+            <th>
+              账单金额{" "}
+              <button onClick={() => setOrder(ORDER.desc)}>
+                降序
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {list
-            .map((i, index) => (
-              <Bill
-                key={i.type + i.time + i.category + i.amount}
-                index={index}
-                categories={categories}
-                type={i.type}
-                time={i.time}
-                category={i.category}
-                amount={i.amount}
-              />
-            ))}
+          {list.map((i, index) => (
+            <Bill
+              key={i.type + i.time + i.category + i.amount}
+              index={index}
+              categories={categories}
+              type={i.type}
+              time={i.time}
+              category={i.category}
+              amount={i.amount}
+            />
+          ))}
         </tbody>
         <BillTotal list={list} show={!!month || !!category} />
       </table>

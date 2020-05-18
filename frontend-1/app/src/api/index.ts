@@ -6,6 +6,12 @@ export enum TYPE {
   outcome = 0,
 }
 
+export enum ORDER {
+  desc = 1,
+  asc = 2,
+  default = 0
+}
+
 export interface IBill {
   type: TYPE;
   time: number;
@@ -19,8 +25,8 @@ export interface ICategory {
   name: string;
 }
 
-export function getBillList(month = "", category = ""): IBill[] {
-  return bill
+export function getBillList(month = "", category: ICategory["id"] = "", order: ORDER): IBill[] {
+  const list = bill
     .filter((i) => {
       if (!month) {
         return true;
@@ -38,8 +44,28 @@ export function getBillList(month = "", category = ""): IBill[] {
       }
       return item.category === category;
     });
+
+  if (order !== ORDER.default) {
+    return list.sort((a, b) => {
+      if (order === ORDER.desc) {
+        return getAmount(a) - getAmount(b);
+      } else {
+        return getAmount(b) - getAmount(a);
+      }
+    });
+  } else {
+    return list;
+  }
+
 }
 
+function getAmount(bill: IBill) {
+  if (bill.type === TYPE.income) {
+    return bill.amount;
+  } else {
+    return -bill.amount;
+  }
+}
 export function getCategories(): ICategory[] {
   return categories;
 }
