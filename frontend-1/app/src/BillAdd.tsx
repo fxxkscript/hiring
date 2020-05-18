@@ -37,7 +37,7 @@ export default function BillAdd({ categories, onAdd }: IProps): ReactElement {
       }
 
       onAdd({
-        time: Date.parse(time),
+        time: Date.parse(time + 'Z'),
         amount: +amount,
         type,
         category,
